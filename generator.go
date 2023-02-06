@@ -1,6 +1,9 @@
 package main
 
-import "math"
+import (
+	"math"
+	"sim/packer"
+)
 
 //	Generates and returns a slice that represents a sin wave.
 //
@@ -62,4 +65,20 @@ func generateCosWave(numSamples int, samplingFreq, freq, amplitude float64) []fl
 	}
 
 	return cosWave
+}
+
+func generateTwoCyclePacketBytes() []byte {
+	data := packer.InstantRawData{}
+
+	data.SetIa(generateSinWave(64, 1920.0, 60.0, 7.0))
+	data.SetIb(generateSinWave(64, 1920.0, 60.0, 3.0))
+	data.SetIc(generateSinWave(64, 1920.0, 60.0, 3.0))
+	data.SetVa(generateSinWave(64, 1920.0, 60.0, 3.0))
+	data.SetVb(generateSinWave(64, 1920.0, 60.0, 3.0))
+	data.SetVc(generateSinWave(64, 1920.0, 60.0, 3.0))
+
+	p := packer.NewTwoCyclePacket(&data)
+
+	return p.ToBytes()
+
 }

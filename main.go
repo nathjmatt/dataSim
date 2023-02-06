@@ -1,5 +1,7 @@
 package main
 
+import "time"
+
 func main() {
 
 	// Number of samples to generate
@@ -22,5 +24,25 @@ func main() {
 
 	plotFloat64(sinWave, "sin.png")
 	plotFloat64(cosWave, "cos.png")
+
+	genAndSendPackets()
+
+	time.Sleep(3 * time.Second)
+}
+
+func genAndSendPackets() {
+	sendingIPAddr := "127.0.0.1"
+	portNumber := uint(8080)
+	s := NewSender(sendingIPAddr, portNumber)
+
+	senderChan := make(chan []byte, 10)
+	defer close(senderChan)
+	go s.Start(senderChan)
+
+	for i := 0; i < 30; i++ {
+		byteData := generateTwoCyclePacketBytes()
+		time.Sleep(33 * time.Millisecond)
+		senderChan <- byteData
+	}
 
 }
