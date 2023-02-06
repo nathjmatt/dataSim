@@ -43,6 +43,10 @@ const (
 	two_cycle_packet_type            = 2
 )
 
+func (p *TwoCyclePacket) SetMessageCount(messageCount uint32) {
+	p.messageCount = messageCount
+}
+
 func (d *InstantRawData) SetIa(samples []float64) {
 	for i := 0; i < len(samples) || i < len(d.ia); i++ {
 		d.ia[i] = samples[i]

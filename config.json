@@ -1,0 +1,10 @@
+{
+    "Destination":{
+        "ip": "192.168.1.152",
+        "port": 8080
+    },
+    "Runtime":{
+        "packetsToSend": 30
+    }
+    
+}

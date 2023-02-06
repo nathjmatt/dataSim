@@ -67,7 +67,7 @@ func generateCosWave(numSamples int, samplingFreq, freq, amplitude float64) []fl
 	return cosWave
 }
 
-func generateTwoCyclePacketBytes() []byte {
+func generateTwoCyclePacketBytes(messageCount uint32) []byte {
 	data := packer.InstantRawData{}
 
 	data.SetIa(generateSinWave(64, 1920.0, 60.0, 7.0))
@@ -78,6 +78,7 @@ func generateTwoCyclePacketBytes() []byte {
 	data.SetVc(generateSinWave(64, 1920.0, 60.0, 3.0))
 
 	p := packer.NewTwoCyclePacket(&data)
+	p.SetMessageCount(messageCount)
 
 	return p.ToBytes()
 

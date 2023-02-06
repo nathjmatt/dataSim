@@ -10,6 +10,7 @@ import (
 
 const results_path = "./results/"
 
+// Creates an image with the name of imageName of a plot of the samples passed.
 func plotFloat64(samples []float64, imageName string) {
 
 	p := plot.New()
@@ -30,11 +31,12 @@ func plotFloat64(samples []float64, imageName string) {
 	}
 	p.Add(line)
 
+	// Save the plot to an image file
 	if err := p.Save(10*vg.Centimeter, 10*vg.Centimeter, imageName); err != nil {
 		panic(err)
 	}
 
-	// Move the image to the pictures folder
+	// Move the image file to the results folder
 	if err := os.Rename(imageName, results_path+imageName); err != nil {
 		panic(err)
 	}

@@ -1,9 +1,41 @@
 package main
 
-import "time"
+import (
+	"fmt"
+	"sim/config"
+	"sync"
+	"time"
+)
 
 func main() {
 
+	senderChan := make(chan []byte, 10)
+
+	s := NewSender(config.Config.Dest.IP, config.Config.Dest.Port)
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go s.Start(senderChan, &wg)
+	go createPackets(config.Config.Runtime.PacketsToSend, senderChan, &wg)
+	wg.Wait()
+
+}
+
+func createPackets(packetsToSend int, senderChan chan<- []byte, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	fmt.Printf("Creating %d packets...\n", packetsToSend)
+	for i := 0; i < packetsToSend; i++ {
+		byteData := generateTwoCyclePacketBytes(uint32(i + 1000))
+		time.Sleep(33 * time.Millisecond)
+		senderChan <- byteData
+	}
+	fmt.Printf("Done creating %d packets.\n", packetsToSend)
+	close(senderChan)
+
+}
+
+func plotSinCosWave() {
 	// Number of samples to generate
 	numSamples := 64
 
@@ -24,25 +56,4 @@ func main() {
 
 	plotFloat64(sinWave, "sin.png")
 	plotFloat64(cosWave, "cos.png")
-
-	genAndSendPackets()
-
-	time.Sleep(3 * time.Second)
-}
-
-func genAndSendPackets() {
-	sendingIPAddr := "127.0.0.1"
-	portNumber := uint(8080)
-	s := NewSender(sendingIPAddr, portNumber)
-
-	senderChan := make(chan []byte, 10)
-	defer close(senderChan)
-	go s.Start(senderChan)
-
-	for i := 0; i < 30; i++ {
-		byteData := generateTwoCyclePacketBytes()
-		time.Sleep(33 * time.Millisecond)
-		senderChan <- byteData
-	}
-
 }
